@@ -7,12 +7,12 @@ using LibraryManagmentAPI.Infrastructure.UnitOfWork;
 
 namespace LibraryManagmentAPI.Common.Services
 {
-    public class ChrckoutService : ICheckoutService
+    public class CheckoutService : ICheckoutService
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
 
-        public ChrckoutService(IUnitOfWork unitOfWork,IMapper mapper)
+        public CheckoutService(IUnitOfWork unitOfWork,IMapper mapper)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
@@ -54,7 +54,6 @@ namespace LibraryManagmentAPI.Common.Services
             response.Data=result;
             return response;
         }
-
         public async Task<BaseCommandResponse> GetCheckoutAsync(int id)
         {
             var response=new BaseCommandResponse();
@@ -72,7 +71,6 @@ namespace LibraryManagmentAPI.Common.Services
             response.responseCode=Enums.ResponseCode.SUCCESS;
             return response;
         }
-
         public async Task<BaseCommandResponse> UpdateCheckoutAsync(CheckoutDTO checkoutDTO)
         {
             var response = new BaseCommandResponse();

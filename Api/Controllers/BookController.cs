@@ -1,11 +1,13 @@
 ﻿using LibraryManagmentAPI.Common.BaseResponse;
 using LibraryManagmentAPI.Common.DTOs;
 using LibraryManagmentAPI.Common.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagmentAPI.Api.Controllers
 {
+    //[Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class BookController : ControllerBase
@@ -37,13 +39,9 @@ namespace LibraryManagmentAPI.Api.Controllers
             var book = await bookService.GetBookAsync(id);
             return Ok(book);
         }
-        [HttpPut("updateBook/{id}")]
-        public async Task<IActionResult> UpdateBook([FromBody] UpdateBookDTO bookDTO,int id)
+        [HttpPut("updateBook")]
+        public async Task<IActionResult> UpdateBook([FromBody] UpdateBookDTO bookDTO)
         {
-            if (id != bookDTO.Id)
-            {
-                return BadRequest();
-            }
             await bookService.UpdateBookAsync(bookDTO);
             return NoContent();
         }

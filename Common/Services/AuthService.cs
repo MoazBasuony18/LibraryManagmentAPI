@@ -55,7 +55,8 @@ namespace LibraryManagmentAPI.Common.Services
         {
             var claims = new List<Claim>
              {
-                 new Claim(ClaimTypes.Name, user.UserName)
+                 new Claim("Email", user.UserName),
+                 new Claim("UserId", user.Id)
              };
 
             var roles = await userManager.GetRolesAsync(user);
@@ -63,7 +64,8 @@ namespace LibraryManagmentAPI.Common.Services
             foreach (var role in roles)
             {
                 claims.Add(new Claim("RoleName", role));
-                claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
+                claims.Add(new Claim("Email", user.Email));
+                claims.Add(new Claim("UserId", user.Id));
             }
 
             return claims;
@@ -93,11 +95,13 @@ namespace LibraryManagmentAPI.Common.Services
                 response.Success = false;
                 response.Message = "Failed Attempt!";
             }
+            else{ 
             await userManager.AddToRolesAsync(user, userDTO.Roles);
             response.Success = true;
             response.responseCode = Enums.ResponseCode.SUCCESS;
             response.Message = "Your Account Created Successfully!";
-            response.Data = result;
+            response.Data = result;        
+        }
             return response;
         }
 

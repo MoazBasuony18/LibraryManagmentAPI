@@ -42,7 +42,7 @@ namespace LibraryManagmentAPI.Infrastructure.Repository
             return await query.AsNoTracking().ToListAsync();
         }
 
-        public async Task<IList<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate = null,
+        public async Task<IQueryable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
             bool disableTracking = true, bool ignoreQueryFilters = false)
@@ -71,11 +71,11 @@ namespace LibraryManagmentAPI.Infrastructure.Repository
 
             if (orderBy != null)
             {
-                return await orderBy(query).ToListAsync();
+                return orderBy(query);
             }
             else
             {
-                return await query.ToListAsync();
+                return query;
             }
         }
 

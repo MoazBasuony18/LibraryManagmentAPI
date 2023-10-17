@@ -1,11 +1,12 @@
 ﻿using LibraryManagmentAPI.Common.BaseResponse;
 using LibraryManagmentAPI.Common.DTOs;
 using LibraryManagmentAPI.Common.IServices;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagmentAPI.Api.Controllers
 {
+    //[Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class CheckoutController : ControllerBase

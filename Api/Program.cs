@@ -1,12 +1,9 @@
 using LibraryManagmentAPI.Common.Configurations;
-using LibraryManagmentAPI.Common.IServices;
 using LibraryManagmentAPI.Common.MappingHelper;
-using LibraryManagmentAPI.Common.Services;
-using LibraryManagmentAPI.Domain.Entities;
 using LibraryManagmentAPI.Infrastructure.Data;
 using LibraryManagmentAPI.Infrastructure.UnitOfWork;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -23,10 +20,12 @@ option.SerializerSettings.ReferenceLoopHandling =
 Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 builder.Services.AddAutoMapper(typeof(MapperInit));
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IBookService, BookService>();
-builder.Services.AddScoped<ICheckoutService, ChrckoutService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IUserService, UserService>();
+ServiceExtension.RegisterServices(builder.Services); // Calling the extension method correctly
+builder.Services.BuildServiceProvider();
+//builder.Services.AddScoped<IBookService, BookService>();
+//builder.Services.AddScoped<ICheckoutService, ChrckoutService>();
+//builder.Services.AddScoped<IAuthService, AuthService>();
+//builder.Services.AddScoped<IUserService, UserService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.Services.AddCors(a =>
@@ -38,8 +37,33 @@ builder.Services.AddCors(a =>
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    // ... other SwaggerGen configurations
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In=ParameterLocation.Header,
+        Description = "JWT Authorization header using the Bearer scheme.",
+        Type = SecuritySchemeType.Http,
+        BearerFormat="JWT",
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
 builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
 builder.Services.ConfigureIdentity();
 builder.Services.ConfigureJWT(builder.Configuration);
 builder.Services.AddDbContext<AppDbContext>(opt =>
@@ -62,7 +86,7 @@ try
 
     app.UseHttpsRedirection();
     app.UseCors("allowAll");
-
+    app.UseAuthentication();
     app.UseAuthorization();
 
     app.MapControllers();

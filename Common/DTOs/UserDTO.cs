@@ -4,7 +4,6 @@ namespace LibraryManagmentAPI.Common.DTOs
 {
     public class UserDTO:LoginUserDTO
     {
-        [Required]
         [DataType(DataType.PhoneNumber)]
         public string Phone { get; set; }
         public ICollection<string> Roles { get; set; }

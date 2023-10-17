@@ -3,12 +3,26 @@ using LibraryManagmentAPI.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using System.Reflection;
 using System.Text;
 
 namespace LibraryManagmentAPI.Common.Configurations
 {
     public static class ServiceExtension
     {
+        public static void RegisterServices(IServiceCollection services)
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+
+            foreach (var type in assembly.GetTypes().Where(t => t.Name.EndsWith("Service")))
+            {
+                var interfaceType = type.GetInterface($"I{type.Name}");
+                if (interfaceType != null)
+                {
+                    services.AddScoped(interfaceType, type);
+                }
+            }
+        }
         public static void ConfigureIdentity(this IServiceCollection services)
         {
             var builder=services.AddIdentity<User, IdentityRole>(options =>
@@ -30,6 +44,7 @@ namespace LibraryManagmentAPI.Common.Configurations
             {
                 o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
                 .AddJwtBearer(o =>
                 {

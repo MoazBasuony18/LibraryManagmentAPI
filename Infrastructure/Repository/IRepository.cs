@@ -8,7 +8,7 @@ namespace LibraryManagmentAPI.Infrastructure.Repository
         Task<IList<TEntity>>GetAll(Expression<Func<TEntity, bool>> predicate=null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             List<string> includes = null);
-        Task<IList<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate = null,
+        Task<IQueryable<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate = null,
                                                   Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
                                                   Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
                                                   bool disableTracking = true,
